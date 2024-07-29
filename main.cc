@@ -16,7 +16,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/videoio.hpp"
 #include "opencv2/video.hpp"
-#include "camera.h"
+//#include "camera.h"
 #include "getopt.h"
 #include "rknn_pool.h"
 #include <iostream>
@@ -45,7 +45,6 @@
 #include <eigen3/Eigen/Geometry>
 #include "mpprtspdecoder.h"
 // #include <QCoreApplication>
-
 #define OUT_VIDEO_PATH "out.h264"
 #define MPP_ALIGN(x, a) (((x) + (a) - 1) & ~((a) - 1))
 using namespace Eigen;
@@ -105,7 +104,6 @@ struct ProgramOptions
   std::string label_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/coco_80_labels_list.txt";
   int thread_count1 = 6;
   int thread_count2 = 18;
-  int camera_index = 0;
   std::string rtsp_url = "rtspsrc location=rtsp://admin:admin@192.168.1.155/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert  !  queue ! appsink";
   std::string rtsp_url2 = "rtspsrc location=rtsp://admin:admin@192.168.1.163/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert !  queue ! appsink  ";
   std::string rtsp_url3 = "rtspsrc location=rtsp://admin:admin@192.168.1.13/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 max-threads=3 ! videoconvert n-threads=3 !  queue ! appsink ";
@@ -303,7 +301,7 @@ int main()
 
   static int image_count3 = 0;
   static int image_res_count3 = 0;
-  static int camera_count = 0;
+  //static int camera_count = 0;
   static int inference_count = 0;
 
   struct timeval time1;
