@@ -2,7 +2,7 @@
 
 #pragma once
 #include "opencv2/opencv.hpp"
-
+#include <chrono>
 struct frame_with_time
 {
   std::unique_ptr<cv::Mat> frame;
@@ -16,7 +16,7 @@ public:
   Camera(uint16_t index, cv::Size size, double framerate);
   Camera(const std::string&rtsp_url, cv::Size size, double framerate);
   ~Camera();
-  std::unique_ptr<cv::Mat> GetNextFrame();
+  frame_with_time GetNextFrame();
  private:
   int m_width;
     int m_height;

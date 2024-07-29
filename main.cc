@@ -16,7 +16,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/videoio.hpp"
 #include "opencv2/video.hpp"
-//#include "camera.h"
+#include "camera.h"
 #include "getopt.h"
 #include "rknn_pool.h"
 #include <iostream>
@@ -374,6 +374,7 @@ int main()
     {
 
       cap177 >> frame_rtsp177; // 读取帧
+
       std::unique_ptr<cv::Mat> image_ptr177 = std::make_unique<cv::Mat>(frame_rtsp177);
 
       // 计算持续时间
@@ -389,8 +390,11 @@ int main()
       if (image_ptr177 != nullptr)
       {
         // printf("image_count2:%d \n", image_count3);
-
-        rknn_pool3->AddInferenceTask(std::move(image_ptr177), image_process3);
+        auto timestamp  = std::chrono::high_resolution_clock::now();
+        frame_with_time frame_t;
+        frame_t.timestamp = timestamp;
+        frame_t.frame = image_ptr177;
+        rknn_pool3->AddInferenceTask(frame_t, image_process3);
         image_count3++;
       }
 

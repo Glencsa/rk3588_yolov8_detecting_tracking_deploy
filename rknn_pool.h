@@ -5,13 +5,14 @@
 #include "queue"
 #include "opencv2/opencv.hpp"
 #include "image_process.h"
+#include "camera.h"
 class RknnPool {
  public:
   RknnPool(const std::string model_path, const int thread_num, const std::string label_path);
   ~RknnPool();
   void Init();
   void DeInit();
-  void AddInferenceTask(std::shared_ptr<cv::Mat> src, ImageProcess &image_process);
+  void AddInferenceTask(frame_with_time src, ImageProcess &image_process);
   int get_model_id();
   //string pool_id;
 

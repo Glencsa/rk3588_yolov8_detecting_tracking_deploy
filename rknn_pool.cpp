@@ -44,7 +44,7 @@ void RknnPool::Init() {
 
 void RknnPool::DeInit() { deinit_post_process(); }
 
-void RknnPool::AddInferenceTask(std::shared_ptr<cv::Mat> src,
+void RknnPool::AddInferenceTask(frame_with_time src,
                                 ImageProcess &image_process) {
                                   // auto starttime = std::chrono::high_resolution_clock::now();
     // 清空队列中的旧帧，只保留最新的帧
@@ -104,7 +104,7 @@ void RknnPool::AddInferenceTask(std::shared_ptr<cv::Mat> src,
         std::shared_ptr<object_detect_result_list> od = std::make_shared<object_detect_result_list>(od_results);
         this->obj_results.push(std::move(od));
       },
-      std::move(src));
+      std::move(src.frame));
     //    auto endtime = std::chrono::high_resolution_clock::now();
     // // // 计算持续时间
     //   std::chrono::duration<double,std::milli> duration = endtime - starttime;
