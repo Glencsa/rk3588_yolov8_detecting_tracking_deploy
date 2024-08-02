@@ -194,7 +194,7 @@ Vector3d obj_locate(vector<one_info> vec)
     SingleView S = mv.viewList[0];
     double xu = uv1[0][0];
     double yv = uv1[0][1];
-    return S.singleViewLocate(xu,yu,0);
+    return S.singleViewLocate(xu,yv,0);
   }
   else 
     return mv.multiViewLocate(uv1);
@@ -393,7 +393,7 @@ int main()
         auto timestamp  = std::chrono::high_resolution_clock::now();
         frame_with_time frame_t;
         frame_t.timestamp = timestamp;
-        frame_t.frame = image_ptr177;
+        frame_t.frame = std::move(image_ptr177);
         rknn_pool3->AddInferenceTask(frame_t, image_process3);
         image_count3++;
       }

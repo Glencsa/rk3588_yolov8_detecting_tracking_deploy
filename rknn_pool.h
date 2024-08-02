@@ -12,7 +12,7 @@ class RknnPool {
   ~RknnPool();
   void Init();
   void DeInit();
-  void AddInferenceTask(frame_with_time src, ImageProcess &image_process);
+  void AddInferenceTask(frame_with_time& src, ImageProcess &image_process);
   int get_model_id();
   //string pool_id;
 

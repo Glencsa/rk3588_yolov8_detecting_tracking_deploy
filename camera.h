@@ -8,6 +8,7 @@ struct frame_with_time
   std::unique_ptr<cv::Mat> frame;
   std::chrono::_V2::system_clock::time_point timestamp;
 };
+
 class Camera
 {
 public:
