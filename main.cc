@@ -44,6 +44,7 @@
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Geometry>
 #include "mpprtspdecoder.h"
+#include "server.h"
 // #include <QCoreApplication>
 #define OUT_VIDEO_PATH "out.h264"
 #define MPP_ALIGN(x, a) (((x) + (a) - 1) & ~((a) - 1))
@@ -443,6 +444,7 @@ int main()
     }
     // 读取和发送串口数据
     printf("Waiting for data...\n");
+
     while (1)
     {
       // 尝试从串口读取数据
