@@ -44,7 +44,7 @@ void RknnPool::Init() {
 
 void RknnPool::DeInit() { deinit_post_process(); }
 
-void RknnPool::AddInferenceTask(frame_with_time src,
+void RknnPool::AddInferenceTask(frame_with_time& src,
                                 ImageProcess &image_process) {
                                   // auto starttime = std::chrono::high_resolution_clock::now();
     // 清空队列中的旧帧，只保留最新的帧
