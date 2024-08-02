@@ -52,7 +52,7 @@ Camera::~Camera() {
   }
 }
 
-frame_with_time Camera::GetNextFrame() {
+std::unique_ptr<cv::Mat> Camera::GetNextFrame() {
   auto frame = std::make_unique<cv::Mat>();
   capture_ >> *frame;
   // cv::cvtColor(*frame, *frame, cv::COLOR_BGR2YUV_I420);
@@ -60,9 +60,5 @@ frame_with_time Camera::GetNextFrame() {
     printf("Get frame error");
     return nullptr;
   }
-  auto time = std::chrono::high_resolution_clock::now();
-  frame_with_time frame_t;
-  frame_t.frame = std::move(frame);
-  frame_t.timestamp = time;
-  return frame_t;
+  return std::move(frame);
 }
