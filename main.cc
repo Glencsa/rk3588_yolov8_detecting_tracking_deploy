@@ -194,7 +194,7 @@ Vector3d obj_locate(vector<one_info> vec)
     SingleView S = mv.viewList[0];
     double xu = uv1[0][0];
     double yv = uv1[0][1];
-    return S.singleViewLocate(xu,yu,0);
+    return S.singleViewLocate(xu,yv,0);
   }
   else 
     return mv.multiViewLocate(uv1);
