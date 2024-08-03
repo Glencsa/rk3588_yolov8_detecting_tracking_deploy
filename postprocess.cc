@@ -1,5 +1,3 @@
-
-
 #include "postprocess.h"
 
 #include <set>

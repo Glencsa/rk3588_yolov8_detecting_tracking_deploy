@@ -6,13 +6,14 @@
 #include "opencv2/opencv.hpp"
 #include "image_process.h"
 #include "camera.h"
+#include "bytetrack/mytrack.h"
 class RknnPool {
  public:
   RknnPool(const std::string model_path, const int thread_num, const std::string label_path);
   ~RknnPool();
   void Init();
   void DeInit();
-  void AddInferenceTask(frame_with_time& src, ImageProcess &image_process);
+  void AddInferenceTask(std::shared_ptr<cv::Mat> src, ImageProcess &image_process);
   int get_model_id();
   //string pool_id;
 
@@ -31,4 +32,7 @@ class RknnPool {
   std::mutex image_results_mutex_;
   std::queue<std::shared_ptr<object_detect_result_list>> obj_results;
   std::mutex obj_results_mutex_;
+  
+  //添加跟踪器
+  MyTrack mytrack;
 };

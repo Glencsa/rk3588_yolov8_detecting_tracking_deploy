@@ -1,5 +1,4 @@
 
-
 #pragma once
 #include "opencv2/opencv.hpp"
 
@@ -10,7 +9,7 @@ class Camera {
   Camera(uint16_t index, cv::Size size, double framerate);
   Camera(const std::string&rtsp_url, cv::Size size, double framerate);
   ~Camera();
-  frame_with_time GetNextFrame();
+  std::unique_ptr<cv::Mat> GetNextFrame();
  private:
   int m_width;
     int m_height;

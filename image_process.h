@@ -3,6 +3,7 @@
 #pragma once
 #include "opencv2/opencv.hpp"
 #include "postprocess.h"
+#include "bytetrack/include/STrack.h"
 
 class ImageProcess {
  public:
@@ -11,6 +12,7 @@ class ImageProcess {
   std::unique_ptr<cv::Mat> Convert(const cv::Mat &src);
   const letterbox_t &get_letter_box();
   void ImagePostProcess(cv::Mat &image, object_detect_result_list &od_results);
+  void ImagePostProcess(cv::Mat &image,const std::vector<STrack> &track_results); 
 
 private:
   double scale_;

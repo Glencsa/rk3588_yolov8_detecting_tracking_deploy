@@ -37,7 +37,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif()
 
 include_directories(${MPP_PATH}/include)
-
+include_directories(${PROJECT_NAME}/bytetrack/include)
 
 # rga
 
@@ -75,9 +75,15 @@ add_executable(${PROJECT_NAME}
     mpprtspdecoder.cpp
     ffstream.cpp
     location.cpp
-    
+    server.cpp
+    bytetrack/src/BYTETracker.cpp
+    bytetrack/src/BYTETracker.cpp
+    bytetrack/src/kalmanFilter.cpp
+    bytetrack/src/lapjv.cpp
+    bytetrack/src/STrack.cpp
+    bytetrack/src/utils.cpp
+  bytetrack/mytrack.cpp 
 )
-
 target_link_libraries(${PROJECT_NAME}
     fileutils
     imageutils

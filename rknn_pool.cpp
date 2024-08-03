@@ -44,7 +44,7 @@ void RknnPool::Init() {
 
 void RknnPool::DeInit() { deinit_post_process(); }
 
-void RknnPool::AddInferenceTask(frame_with_time& src,
+void RknnPool::AddInferenceTask(std::shared_ptr<cv::Mat> src,
                                 ImageProcess &image_process) {
                                   // auto starttime = std::chrono::high_resolution_clock::now();
     // 清空队列中的旧帧，只保留最新的帧
@@ -94,17 +94,20 @@ void RknnPool::AddInferenceTask(frame_with_time& src,
           //   cout<<"mubiao_position:: (x,y,z):"<<no_res<<endl;
         }
 
+        //bytetrack检测
+        this->mytrack.Add_frame(od_results);
+        std::cout<<"strack number "<<this->mytrack.m_stracks.size()<<" of "<<od_results.count<<endl;
+        image_process.ImagePostProcess(*original_img, this->mytrack.m_stracks);
 
 
-
-        image_process.ImagePostProcess(*original_img, od_results);
+        // image_process.ImagePostProcess(*original_img, od_results);
         std::lock_guard<std::mutex> lock_guard(this->image_results_mutex_);
         this->image_results_.push(std::move(original_img));
         std::lock_guard<std::mutex> lock_guard1(this->obj_results_mutex_);
         std::shared_ptr<object_detect_result_list> od = std::make_shared<object_detect_result_list>(od_results);
         this->obj_results.push(std::move(od));
       },
-      std::move(src.frame));
+      std::move(src));
     //    auto endtime = std::chrono::high_resolution_clock::now();
     // // // 计算持续时间
     //   std::chrono::duration<double,std::milli> duration = endtime - starttime;
