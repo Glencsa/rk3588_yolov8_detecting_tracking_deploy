@@ -97,7 +97,7 @@ void RknnPool::AddInferenceTask(std::shared_ptr<cv::Mat> src,
         //bytetrack检测
         this->mytrack.Add_frame(od_results);
         std::cout<<"strack number "<<this->mytrack.m_stracks.size()<<" of "<<od_results.count<<endl;
-        image_process.ImagePostProcess(*original_img, this->mytrack.m_stracks);
+        image_process.ImagePostProcess(*original_img, this->mytrack.m_stracks,this->mytrack);
 
 
         // image_process.ImagePostProcess(*original_img, od_results);
