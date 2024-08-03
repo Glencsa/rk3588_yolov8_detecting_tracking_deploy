@@ -144,9 +144,19 @@ void ImageProcess::ImagePostProcess(cv::Mat &image,
   }
 }
 
+void DrawTrackLines(cv::Mat &image, const  MyTrack &mytrack) {
+  int strack_num=mytrack.m_stracks.size();
+  for (int i = 0; i < strack_num; i++)
+  {
+    vector<cv::Point> point_vector=mytrack.m_history_trackpoints[mytrack.m_stracks[i].track_id];
+    cv::polylines(image, point_vector, false, Scalar(0, 0, 255), 2);
+  }
+  
+}
+
 
 void ImageProcess::ImagePostProcess(cv::Mat &image,
-                                    const std::vector<STrack> &track_results) {
+                                    const std::vector<STrack> &track_results,const MyTrack &mytrack) {
   char text[256];
   for (int i = 0; i < track_results.size(); ++i) {
     const STrack &one_track = track_results[i];
@@ -163,6 +173,7 @@ void ImageProcess::ImagePostProcess(cv::Mat &image,
                 cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 0, 0), 2,
                 cv::LINE_8);
 std::cout<<one_track.tlbr[0]<<" "<<one_track.tlbr[1]<<" "<<one_track.tlbr[2]<<" "<<one_track.tlbr[3]<<endl;
+    DrawTrackLines(image,mytrack);
   }
 }
 

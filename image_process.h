@@ -4,6 +4,7 @@
 #include "opencv2/opencv.hpp"
 #include "postprocess.h"
 #include "bytetrack/include/STrack.h"
+#include "bytetrack/mytrack.h"
 
 class ImageProcess {
  public:
