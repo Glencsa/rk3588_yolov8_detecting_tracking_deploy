@@ -24,5 +24,16 @@ void MyTrack::Add_frame(const object_detect_result_list &ob_result)
         // this->m_byte_tracker.update()
     }
     m_stracks= m_byte_tracker.update(objects_lst);
+    //记录历史轨迹
+    for (int i = 0; i < m_stracks.size(); i++)
+    {
+        int st_id= m_stracks[i].track_id;
+        m_history_trackpoints[st_id].push_back(
+            cv::Point(
+                int((m_stracks[i].tlbr[0]+m_stracks[i].tlbr[2])/2+0.5),
+                int((m_stracks[i].tlbr[1]+m_stracks[i].tlbr[3])/2+0.5)
+            )
+        );
+    }
     
 }
