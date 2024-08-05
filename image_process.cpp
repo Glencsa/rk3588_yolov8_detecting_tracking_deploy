@@ -148,8 +148,8 @@ void DrawTrackLines(cv::Mat &image, const  MyTrack &mytrack) {
   int strack_num=mytrack.m_stracks.size();
   for (int i = 0; i < strack_num; i++)
   {
-    vector<cv::Point> point_vector=mytrack.m_history_trackpoints[mytrack.m_stracks[i].track_id];
-    cv::polylines(image, point_vector, false, Scalar(0, 0, 255), 4，cv::LINE_8); 
+    const std::vector<cv::Point> point_vector=mytrack.m_history_trackpoints.at(mytrack.m_stracks[i].track_id);
+    cv::polylines(image, point_vector, false, Scalar(0, 0, 255), 4, cv::LINE_8); 
     for (int j = 0; j < point_vector.size(); j++)
     {
       std::cout<<'('<<point_vector[j].x<<" "<<point_vector[j].y<<')';
