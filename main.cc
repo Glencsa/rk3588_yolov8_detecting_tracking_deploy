@@ -16,7 +16,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/videoio.hpp"
 #include "opencv2/video.hpp"
-//#include "camera.h"
+#include "camera.h"
 #include "getopt.h"
 #include "rknn_pool.h"
 #include <iostream>
@@ -110,7 +110,7 @@ struct ProgramOptions
   std::string rtsp_url2 = "rtspsrc location=rtsp://admin:admin@192.168.1.163/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert !  queue ! appsink  ";
   std::string rtsp_url3 = "rtspsrc location=rtsp://admin:admin@192.168.1.13/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 max-threads=3 ! videoconvert n-threads=3 !  queue ! appsink ";
   std::string rtsp_url4 = "rtspsrc location=rtsp://192.168.2.119/554 latency=200 drop-on-latency=true ! rtph264depay !   h264parse !   avdec_h264   ! videoconvert  n-threads=2  ! appsink   ";
- // std::string rtsp_url5 = "filesrc location=/home/linaro/test/testDJI.mp4 ! qtdemux !   h264parse !   avdec_h264  max-threads=2 ! videoconvert  n-threads=2  ! appsink   ";
+  // std::string rtsp_url5 = "filesrc location=/home/linaro/test/testDJI.mp4 ! qtdemux !   h264parse !   avdec_h264  max-threads=2 ! videoconvert  n-threads=2  ! appsink   ";
   int width = 1920;
   int height = 1080;
   double fps = 25.0;
@@ -197,7 +197,7 @@ one_info get_position(const unsigned char *data, int len)
   uav_state u = {};
   memcpy(&u, &data[6], sizeof(u));
   uav_info uav;
-  uav.xyz_world << u.lng / 1e7,u.lat / 1e7 , u.gps_h / 1e2;
+  uav.xyz_world << u.lng / 1e7, u.lat / 1e7, u.gps_h / 1e2;
   uav.roll = (double)u.roll_uav / 1e2;
   uav.pitch = (double)u.pitch_uav / 1e2;
   uav.yaw = (double)u.yaw_uav / 1e2;
@@ -216,7 +216,7 @@ one_info get_position(const unsigned char *data, int len)
 }
 ProgramOptions options;
 auto rknn_pool3 = std::make_unique<RknnPool>(
-      options.model_path, options.thread_count2, options.label_path);
+    options.model_path, options.thread_count2, options.label_path);
 
 ImageProcess image_process3(options.width2, options.height2, 640);
 std::unique_ptr<cv::Mat> image3;
@@ -229,21 +229,15 @@ void *mpp_frame_addr177 = NULL;
 int enc_data_size177;
 static int frame_index177 = 0;
 
-
-
-
-
-
-
 int main()
 {
   ProgramOptions options;
   mpp_dec_enc mpp_dec_enc_;
   int video_type = 264;
 
-  // auto camera3 = std::make_unique<Camera>(
-  //     options.rtsp_url4, cv::Size(options.width, options.height),
-  //     options.fps);
+  auto camera3 = std::make_unique<Camera>(
+      options.rtsp_url4, cv::Size(options.width, options.height),
+      options.fps);
   auto rknn_pool3 = std::make_unique<RknnPool>(
       options.model_path, options.thread_count2, options.label_path);
 
@@ -268,29 +262,34 @@ int main()
   gettimeofday(&time2, nullptr);
   long tmpTime2, lopTime2 = time2.tv_sec * 1000 + time2.tv_usec / 1000;
   struct timeval start_time, stop_time;
-cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
-    // 检查摄像头是否成功打开1
-    if (!cap177.isOpened()) {
-        std::cerr << "Error: Cannot open RTSP177 stream" << std::endl;
-        return -1;
-    }
-   cv::Mat frame_rtsp177;
-  // auto imageCaptureThread1 = [&]()
+  // cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
+  // // 检查摄像头是否成功打开1
+  // if (!cap177.isOpened())
   // {
-  //   while (1)
-  //   {
-  //     auto image1 = camera3->GetNextFrame();
-  //     if (image1 != nullptr)
-  //     {
-  //       // 加锁以向缓冲区添加图像1
-  //       std::unique_lock<std::mutex> lock(bufferMutex1);
-  //       imageBuffer1.push_back(std::move(image1));
-  //       lock.unlock();
-  //       // 通知等待的线程有新的图像可用
-  //       bufferCondition1.notify_one();
-  //     }
-  //   }
-  // };
+  //   std::cerr << "Error: Cannot open RTSP177 stream" << std::endl;
+  //   return -1;
+  // }
+  // cv::Mat frame_rtsp177;
+
+
+  auto imageCaptureThread1 = [&]()
+  {
+    while (1)
+    {
+      auto image1 = camera3->GetNextFrame();
+      if (image1 != nullptr)
+      {
+        // 加锁以向缓冲区添加图像1
+        std::unique_lock<std::mutex> lock(bufferMutex1);
+        imageBuffer1.push_back(std::move(image1));
+        lock.unlock();
+        // 通知等待的线程有新的图像可用
+        bufferCondition1.notify_one();
+      }
+    }
+  };
+
+
 
   // 线程函数3，处理第3个摄像头
   auto thread_func3 = [&]()
@@ -315,7 +314,7 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
     enc_params177.height = 1080;
     enc_params177.hor_stride = 1920 * 3;
     enc_params177.ver_stride = 1088;
-    enc_params177.fmt = MPP_FMT_BGR888;        // MPP_FMT_BGR888  MPP_FMT_YUV420SP  MPP_FMT_RGB888
+    enc_params177.fmt = MPP_FMT_BGR888;       // MPP_FMT_BGR888  MPP_FMT_YUV420SP  MPP_FMT_RGB888
     enc_params177.type = MPP_VIDEO_CodingAVC; // H264MPP_VIDEO_CodingHEVC  MPP_VIDEO_CodingAVC
     mpp_encoder177->Init(enc_params177, NULL);
 
@@ -328,23 +327,23 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
 
     while (1)
     {
-       
-         cap177 >> frame_rtsp177; // 读取帧
-       std::unique_ptr<cv::Mat> image_ptr177 = std::make_unique<cv::Mat>(frame_rtsp177);
-        
-    // 计算持续时间
-     
+
+      //cap177 >> frame_rtsp177; // 读取帧
+      //std::unique_ptr<cv::Mat> image_ptr177 = std::make_unique<cv::Mat>(frame_rtsp177);
+
+      // 计算持续时间
+
       // auto starttime = std::chrono::high_resolution_clock::now();
-      // std::unique_lock<std::mutex> lock(bufferMutex1);
-      // bufferCondition1.wait(lock, [&]
-      //                       { return !imageBuffer1.empty(); });
-      // auto image1 = std::move(imageBuffer1.front());
-      // imageBuffer1.pop_front();
-      // lock.unlock();
+      std::unique_lock<std::mutex> lock(bufferMutex1);
+      bufferCondition1.wait(lock, [&]
+                            { return !imageBuffer1.empty(); });
+      auto image_ptr177 = std::move(imageBuffer1.front());
+      imageBuffer1.pop_front();
+      lock.unlock();
       // auto starttime = std::chrono::high_resolution_clock::now();
       if (image_ptr177 != nullptr)
       {
-       // printf("image_count2:%d \n", image_count3);
+        // printf("image_count2:%d \n", image_count3);
 
         rknn_pool3->AddInferenceTask(std::move(image_ptr177), image_process3);
         image_count3++;
@@ -355,17 +354,17 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
       // // 计算持续时间宽度: 2560  高度: 1440 4M
       // std::chrono::duration<double,std::milli> duration = endtime - starttime;
       // printf("camera use time: \t%f ms\n", duration.count());
-      //   auto endtime = std::chrono::high_resolution_clock::now(); 
+      //   auto endtime = std::chrono::high_resolution_clock::now();
       //  std::chrono::duration<double,std::milli> duration = endtime - starttime;
       // printf("循环里面取推理结果用时: \t%f ms\n", duration.count());
       if (image_res3 != nullptr)
       {
         image_res_count3++;
-         auto result3 = *image_res3;
-         //std::string save_dir2 = "/home/linaro/datasets";
-         //std::string imagesavepath2=save_dir2+"/"+std::to_string(image_res_count3)+".jpg";
-          //cv::imwrite(imagesavepath2,result3);
-      //  printf("image_res_count2:%d \n", image_res_count3);
+        auto result3 = *image_res3;
+        // std::string save_dir2 = "/home/linaro/datasets";
+        // std::string imagesavepath2=save_dir2+"/"+std::to_string(image_res_count3)+".jpg";
+        // cv::imwrite(imagesavepath2,result3);
+        //  printf("image_res_count2:%d \n", image_res_count3);
         //    cv::imshow("Video3", *image_res3);
         //  cv::waitKey(1);
         memcpy(mpp_frame_addr177, image_res3->data, 1920 * 1080 * 3);
@@ -386,7 +385,6 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
           rtsp_do_event(g_rtsplive177);
         }
       }
-      
     }
   };
 
@@ -413,32 +411,38 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
       {
         buffer_len += bytes_read;
         // 寻找起始字节 0x90 和 0xEB
-            int start_index = -1;
-            for (int i = 0; i <= buffer_len - 2; ++i) {
-                if (buffer[i] == 0x90 && buffer[i + 1] == 0xEB) {
-                    start_index = i;
-                    break;
-                }
-            }
+        int start_index = -1;
+        for (int i = 0; i <= buffer_len - 2; ++i)
+        {
+          if (buffer[i] == 0x90 && buffer[i + 1] == 0xEB)
+          {
+            start_index = i;
+            break;
+          }
+        }
 
-            if (start_index != -1) {  // 找到了起始字节
-                if (buffer_len - start_index >= 63) { 
-                  //  printf("Received data (63 bytes):\n");
-                  //  print_hex("", buffer + start_index, 63);
-                    o1=get_position(buffer + start_index, 63);
-                    cout<<"无人机坐标："<<o1.uav.xyz_world<<endl
-                      <<"roll:"<<o1.uav.roll<<"pitch:"<<o1.uav.pitch<<"yaw:"<<o1.uav.yaw<<endl;
-                    // uav_state u = {};
-                    // memcpy(&u, &buffer[start_index + 6], sizeof(u));
-                    // printf("经度：%f,纬度：%f,高度：%f \n", u.lat / 1e7, u.lng / 1e7, u.gps_h / 1e2);
-                    // printf("roll:%f,pitch:%f,yaw: %f \n", u.roll_uav / 1e2, u.picth_uav / 1e2, u.yaw_uav / 1e2);
-                    memmove(buffer, buffer + start_index + 63, buffer_len - start_index - 63);
-                    buffer_len -= (start_index + 63);
-                }
-            } else {
-                // 如果没有找到起始字节，则丢弃缓冲区中的数据
-                buffer_len = 0;
-            }
+        if (start_index != -1)
+        { // 找到了起始字节
+          if (buffer_len - start_index >= 63)
+          {
+            //  printf("Received data (63 bytes):\n");
+            //  print_hex("", buffer + start_index, 63);
+            o1 = get_position(buffer + start_index, 63);
+            cout << "无人机坐标：" << o1.uav.xyz_world << endl
+                 << "roll:" << o1.uav.roll << "pitch:" << o1.uav.pitch << "yaw:" << o1.uav.yaw << endl;
+            // uav_state u = {};
+            // memcpy(&u, &buffer[start_index + 6], sizeof(u));
+            // printf("经度：%f,纬度：%f,高度：%f \n", u.lat / 1e7, u.lng / 1e7, u.gps_h / 1e2);
+            // printf("roll:%f,pitch:%f,yaw: %f \n", u.roll_uav / 1e2, u.picth_uav / 1e2, u.yaw_uav / 1e2);
+            memmove(buffer, buffer + start_index + 63, buffer_len - start_index - 63);
+            buffer_len -= (start_index + 63);
+          }
+        }
+        else
+        {
+          // 如果没有找到起始字节，则丢弃缓冲区中的数据
+          buffer_len = 0;
+        }
         //  buffer[bytes_read] = '\0';
         // if (buffer_len >= 63)
         // {
@@ -465,61 +469,6 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
       // }
 
       auto ob1 = rknn_pool3->GetObjResultFromQueue();
-      // auto ob2 = rknn_pool2->GetObjResultFromQueue();
-      // 多机目标定位
-      //    if(ob1&&ob2)
-      //    {
-      //      for(int i =0;i<ob1->count;++i)
-      //      {
-      //        for(int j = 0;j<ob2->count;++j)
-      //        {
-      //          if(ob1->results[i].cls_id == ob2->results[j].cls_id)
-      //                {
-      //                    int u1 = (ob1->results[i].box.left+ob1->results[i].box.right)/2;
-      //                    int v1 = (ob1->results[i].box.top+ob1->results[i].box.bottom)/2;
-      //                    int u2 = (ob2->results[j].box.left+ob2->results[j].box.right)/2;
-      //                    int v2 = (ob2->results[j].box.top+ob2->results[j].box.bottom)/2;
-      //                    uav_info uva1,uva2;
-      //                    uva1.xyz_world <<48,71,0;
-      //                    uva1.yaw = 90;
-      //                    uva1.pitch = 0;
-      //                    uva1.roll = -45;
-      //                    uva2.xyz_world<<18.5,82,0;
-      //                    uva2.yaw = 90;
-      //                    uva2.pitch = 0;
-      //                    uva2.roll = 0;
-      //                    cam_info cam1,cam2;
-      //                    cam1.xyz_uav <<0,0,0;
-      //                    cam1.pitch = 0;
-      //                    cam1.roll = 0;
-      //                    cam1.yaw = 0;
-      //                    cam1.K<<1,0,960,
-      //                          0,2,540,
-      //                          0,0,1;
-      //                    cam2.xyz_uav <<0,0,0;
-      //                    cam2.pitch = 0;
-      //                    cam2.roll = 0;
-      //                    cam2.yaw = 0;
-      //                    cam2.K<<500,0,960,
-      //                          0,500,540,
-      //                          0,0,1;
-      //                    one_info o1,o2;
-      //                    o1.cam = cam1;
-      //                    o1.uav = uva1;
-      //                    o1.uv <<u1,v1;
-      //                    o2.cam = cam2;
-      //                    o2.uav = uva2;
-      //                    o2.uv <<u2,v2;
-      //                    std::vector<one_info> O = {o1,o2};
-      //                    Vector3d result_location = obj_locate(O);
-      //                    std::cout<<"position:"<<endl<<result_location<<endl;
-      //                    cout<<endl;
-      //                }
-      //        }
-      //      }
-      //    }
-      //  }
-
       if (ob1)
       {
 
@@ -530,9 +479,9 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
           o1.uv << u1, v1;
           std::vector<one_info> O = {o1};
           Vector3d result_location = obj_locate(O);
-          //std::cout << "position:" << std::endl
-           //         << result_location << std::endl;
-          //std::cout << std::endl;
+          // std::cout << "position:" << std::endl
+          //          << result_location << std::endl;
+          // std::cout << std::endl;
         }
       }
     };
@@ -541,15 +490,14 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
     close(fd);
   };
   // 创建两个线程并启动1
- // std::thread thread1(imageCaptureThread1);
+  std::thread thread1(imageCaptureThread1);
   std::thread thread2(thread_func3);
   std::thread thread3(thread_location);
-
   // 等待两个线程结束
 
- // setThreadAffinity(thread1, 1, 2);
+  // setThreadAffinity(thread1, 1, 2);
   setThreadAffinity2(thread2, 3, 4);
- // thread1.join();
+  thread1.join();
   thread2.join();
   thread3.join();
   // displayThread.join();
@@ -560,4 +508,3 @@ cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
 
   return 0;
 }
-

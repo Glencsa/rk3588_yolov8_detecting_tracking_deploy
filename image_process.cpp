@@ -154,13 +154,14 @@ void ImageProcess::ImagePostProcess(cv::Mat &image,
     cv::rectangle(
         image, cv::Point(one_track.tlbr[0], one_track.tlbr[1]),
         cv::Point(one_track.tlbr[2], one_track.tlbr[3]),
-        cv::Scalar(0, 0, 255), 2);
+        cv::Scalar(0, 0, 255), 4);
     
     sprintf(text, "%d %.3f%%", one_track.track_id,
             one_track.score);
+    
     cv::putText(image, text,
-                cv::Point(one_track.tlbr[0], one_track.tlbr[1] + 20),
-                cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 0, 0), 2,
+                cv::Point(one_track.tlbr[0], one_track.tlbr[1] - 20),
+                cv::FONT_HERSHEY_COMPLEX, 2, cv::Scalar(255, 0, 0), 3,
                 cv::LINE_8);
 std::cout<<one_track.tlbr[0]<<" "<<one_track.tlbr[1]<<" "<<one_track.tlbr[2]<<" "<<one_track.tlbr[3]<<endl;
   }
