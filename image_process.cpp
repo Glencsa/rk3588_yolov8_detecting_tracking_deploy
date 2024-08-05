@@ -149,7 +149,12 @@ void DrawTrackLines(cv::Mat &image, const  MyTrack &mytrack) {
   for (int i = 0; i < strack_num; i++)
   {
     vector<cv::Point> point_vector=mytrack.m_history_trackpoints[mytrack.m_stracks[i].track_id];
-    cv::polylines(image, point_vector, false, Scalar(0, 0, 255), 2);
+    cv::polylines(image, point_vector, false, Scalar(0, 0, 255), 4，cv::LINE_8); 
+    for (int j = 0; j < point_vector.size(); j++)
+    {
+      std::cout<<'('<<point_vector[j].x<<" "<<point_vector[j].y<<')';
+    }
+    std::cout<<endl;
   }
   
 }
@@ -166,7 +171,7 @@ void ImageProcess::ImagePostProcess(cv::Mat &image,
         cv::Point(one_track.tlbr[2], one_track.tlbr[3]),
         cv::Scalar(0, 0, 255), 2);
     
-    sprintf(text, "%d %.3f%%", one_track.track_id,
+    sprintf(text, "id: %d %.3f%%", one_track.track_id,
             one_track.score);
     cv::putText(image, text,
                 cv::Point(one_track.tlbr[0], one_track.tlbr[1] + 20),

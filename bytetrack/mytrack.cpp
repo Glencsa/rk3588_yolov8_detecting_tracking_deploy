@@ -30,8 +30,8 @@ void MyTrack::Add_frame(const object_detect_result_list &ob_result)
         int st_id= m_stracks[i].track_id;
         m_history_trackpoints[st_id].push_back(
             cv::Point(
-                (int(m_stracks[i].tlbr[0]+m_stracks[i].tlbr[2])/2+0.5),
-                (int(m_stracks[i].tlbr[1]+m_stracks[i].tlbr[3])/2+0.5)
+                int((m_stracks[i].tlbr[0]+m_stracks[i].tlbr[2])/2+0.5),
+                int((m_stracks[i].tlbr[1]+m_stracks[i].tlbr[3])/2+0.5)
             )
         );
     }
