@@ -44,6 +44,7 @@
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Geometry>
 #include "mpprtspdecoder.h"
+#include "server.h"
 // #include <QCoreApplication>
 
 #define OUT_VIDEO_PATH "out.h264"
@@ -192,10 +193,8 @@ Vector3d obj_locate(vector<one_info> vec)
   }
   return mv.multiViewLocate(uv1);
 }
-one_info get_position(const unsigned char *data, int len)
+one_info get_position(uav_state u, int len)
 {
-  uav_state u = {};
-  memcpy(&u, &data[6], sizeof(u));
   uav_info uav;
   uav.xyz_world << u.lng / 1e7, u.lat / 1e7, u.gps_h / 1e2;
   uav.roll = (double)u.roll_uav / 1e2;
@@ -427,7 +426,25 @@ int main()
           {
             //  printf("Received data (63 bytes):\n");
             //  print_hex("", buffer + start_index, 63);
-            o1 = get_position(buffer + start_index, 63);
+            uav_state u = {};
+            memcpy(&u,&buffer[start_index+6],sizeof(u));
+            o1 = get_position(u,63);
+
+            tagOFC_Track_Receive msg_send;
+            memset(&msg_send,0,sizeof(tagOFC_Track_Receive));
+            msg_send.header.wMsgID = 0x7801;
+            msg_send.header.wMsgLen = sizeof(tagOFC_Track_Receive);
+            msg_send.iBoat = 6;
+            
+            //填写msg_send
+
+            //发送
+            char buf[512]={0};
+            memcpy(buf,&msg_send,sizeof(tagOFC_Track_Receive));
+            //socket发送buf，长度为sizeof(tagOFC_Track_Receive)
+
+
+            //o1 = get_position(buffer + start_index, 63);
             cout << "无人机坐标：" << o1.uav.xyz_world << endl
                  << "roll:" << o1.uav.roll << "pitch:" << o1.uav.pitch << "yaw:" << o1.uav.yaw << endl;
             // uav_state u = {};
@@ -443,21 +460,7 @@ int main()
           // 如果没有找到起始字节，则丢弃缓冲区中的数据
           buffer_len = 0;
         }
-        //  buffer[bytes_read] = '\0';
-        // if (buffer_len >= 63)
-        // {
-        //   printf("Received data (63 bytes):\n");
-        //   print_hex("", buffer, 63);
-
-        //   o1 = get_position(buffer, 63);
-        //   //uav_state u = {};
-        //   //memcpy(&u, &buffer[6], sizeof(u));
-        //   //printf("经度：%d,纬度：%d,高度：%d \n", u.lat / 1e7, u.lng / 1e7, u.gps_h / 1e2);
-        //   // cout<<"无人机坐标："<<endl<<o1.uav.xyz_world<<endl
-        //   // <<"roll:"<<o1.uav.roll<<"pitch:"<<o1.uav.pitch<<"yaw:"<<o1.uav.yaw<<endl;
-        //   memmove(buffer, buffer + 63, buffer_len - 63);
-        //   buffer_len -= 63;
-        // }
+        
       }
       // 发送数据到串口
       //  printf("Enter message to send (Ctrl+C to exit): ");
