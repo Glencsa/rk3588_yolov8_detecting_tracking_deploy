@@ -401,6 +401,8 @@ int main()
     }
     // 读取和发送串口数据
     printf("Waiting for data...\n");
+    Server ser(6789,"201.162.16.246");
+    if(!ser.connect_server())return false;
     while (1)
     {
       // 尝试从串口读取数据
@@ -442,7 +444,7 @@ int main()
             char buf[512]={0};
             memcpy(buf,&msg_send,sizeof(tagOFC_Track_Receive));
             //socket发送buf，长度为sizeof(tagOFC_Track_Receive)
-
+            ser.send_msg(buf,sizeof(tagOFC_Track_Receive));
 
             //o1 = get_position(buffer + start_index, 63);
             cout << "无人机坐标：" << o1.uav.xyz_world << endl
@@ -487,7 +489,9 @@ int main()
           // std::cout << std::endl;
         }
       }
+      
     };
+    ser.close_server();
 
     // 关闭串口设备
     close(fd);
