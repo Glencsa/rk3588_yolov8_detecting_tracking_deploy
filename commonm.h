@@ -9,9 +9,9 @@
 // #include <stdlib.h>
 #define OBJ_NAME_MAX_SIZE 64
 #define OBJ_NUMB_MAX_SIZE 128
-#define OBJ_CLASS_NUM 1
-#define NMS_THRESH 0.45
-#define BOX_THRESH 0.25
+#define OBJ_CLASS_NUM 17
+#define NMS_THRESH 0.25
+#define BOX_THRESH 0.10
 #define PROTO_CHANNEL (32)
 #define PROTO_HEIGHT  (160)
 #define PROTO_WEIGHT (160)

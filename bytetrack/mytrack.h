@@ -10,7 +10,7 @@ class MyTrack{
 public:
     BYTETracker m_byte_tracker;
     std::vector<STrack>m_stracks;
-    unordered_map<int,vector<cv::Point>>m_history_trackpoints;
+    //unordered_map<int,vector<cv::Point>>m_history_trackpoints;
 public:
     MyTrack(int frame_rate, int track_buffer);
     MyTrack(){};

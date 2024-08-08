@@ -102,8 +102,8 @@ typedef struct
 } mpp_dec_enc;
 struct ProgramOptions
 {
-  std::string model_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/m.rknn";
-  std::string label_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/coco_80_labels_list.txt";
+  std::string model_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/next-n.rknn";
+  std::string label_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/dyt.txt";
   int thread_count1 = 6;
   int thread_count2 = 12;
   int camera_index = 0;
@@ -111,7 +111,7 @@ struct ProgramOptions
   std::string rtsp_url2 = "rtspsrc location=rtsp://admin:admin@192.168.1.163/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert !  queue ! appsink  ";
   std::string rtsp_url3 = "rtspsrc location=rtsp://admin:admin@192.168.1.13/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 max-threads=3 ! videoconvert n-threads=3 !  queue ! appsink ";
   std::string rtsp_url4 = "rtspsrc location=rtsp://192.168.2.119/554 latency=200 drop-on-latency=true ! rtph264depay !   h264parse !   avdec_h264   ! videoconvert  n-threads=2  ! appsink   ";
-  // std::string rtsp_url5 = "filesrc location=/home/linaro/test/testDJI.mp4 ! qtdemux !   h264parse !   avdec_h264  max-threads=2 ! videoconvert  n-threads=2  ! appsink   ";
+   std::string rtsp_url5 = "filesrc location=/home/linaro/test/DJI_0354.mp4 ! qtdemux !   h264parse !   avdec_h264  max-threads=2 ! videoconvert  n-threads=2  ! appsink   ";
   int width = 1920;
   int height = 1080;
   double fps = 25.0;
@@ -235,7 +235,7 @@ int main()
   int video_type = 264;
 
   auto camera3 = std::make_unique<Camera>(
-      options.rtsp_url4, cv::Size(options.width, options.height),
+      options.rtsp_url5, cv::Size(options.width, options.height),
       options.fps);
   auto rknn_pool3 = std::make_unique<RknnPool>(
       options.model_path, options.thread_count2, options.label_path);
