@@ -57,7 +57,7 @@ using namespace std;
 // static rtsp_session_handle g_rtsp_session155;
 
 // rtsp_demo_handle g_rtsplive163 = NULL;
-// static rtsp_session_handle g_rtsp_session163;
+// static rtsp_session_handle g_rtsp_session163;1
 rtsp_demo_handle g_rtsplive177 = NULL;
 static rtsp_session_handle g_rtsp_session177;
 
@@ -101,16 +101,16 @@ typedef struct
 } mpp_dec_enc;
 struct ProgramOptions
 {
-  std::string model_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/m.rknn";
-  std::string label_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/coco_80_labels_list.txt";
+  std::string model_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/next-n.rknn";//yolov8.rknn   next-n.rknn
+  std::string label_path = "/home/linaro/rknn_model_zoo-main/examples/yolov8/model/dyt.txt";
   int thread_count1 = 6;
   int thread_count2 = 12;
   int camera_index = 0;
-  std::string rtsp_url = "rtspsrc location=rtsp://admin:admin@192.168.1.155/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert  !  queue ! appsink";
+  std::string rtsp_url = "rtspsrc location=rtsp://admin:admin@192.168.1.155/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert   n-threads=2 !  queue ! appsink";
   std::string rtsp_url2 = "rtspsrc location=rtsp://admin:admin@192.168.1.163/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 ! videoconvert !  queue ! appsink  ";
   std::string rtsp_url3 = "rtspsrc location=rtsp://admin:admin@192.168.1.13/ latency=0 ! rtph264depay !  h264parse !  avdec_h264 max-threads=3 ! videoconvert n-threads=3 !  queue ! appsink ";
   std::string rtsp_url4 = "rtspsrc location=rtsp://192.168.2.119/554 latency=200 drop-on-latency=true ! rtph264depay !   h264parse !   avdec_h264   ! videoconvert  n-threads=2  ! appsink   ";
-  // std::string rtsp_url5 = "filesrc location=/home/linaro/test/testDJI.mp4 ! qtdemux !   h264parse !   avdec_h264  max-threads=2 ! videoconvert  n-threads=2  ! appsink   ";
+   std::string rtsp_url5 = "filesrc location=/home/linaro/DJI_0354.mp4 ! qtdemux !   h264parse !   mppvideodec   ! videoconvert   n-threads=3  ! appsink  ";
   int width = 1920;
   int height = 1080;
   double fps = 25.0;
@@ -118,7 +118,7 @@ struct ProgramOptions
   int height2 = 1080;
   double fps2 = 25.0;
 };
-// 声明一个用于存储图像数据的缓冲区abmax-threads=3
+// 声明一个用于存储图像数据的缓冲区abmax-threads=311
 // double __get_us(struct timeval t) { return (t.tv_sec * 1000000 + t.tv_usec); }
 std::deque<std::unique_ptr<cv::Mat>> imageBuffer2;
 std::mutex bufferMutex2;
@@ -236,7 +236,7 @@ int main()
   int video_type = 264;
 
   auto camera3 = std::make_unique<Camera>(
-      options.rtsp_url4, cv::Size(options.width, options.height),
+      options.rtsp_url5, cv::Size(options.width, options.height),
       options.fps);
   auto rknn_pool3 = std::make_unique<RknnPool>(
       options.model_path, options.thread_count2, options.label_path);
@@ -263,7 +263,7 @@ int main()
   long tmpTime2, lopTime2 = time2.tv_sec * 1000 + time2.tv_usec / 1000;
   struct timeval start_time, stop_time;
   // cv::VideoCapture cap177(options.rtsp_url4, cv::CAP_GSTREAMER);
-  // // 检查摄像头是否成功打开1
+  // // 检查摄像头是否成功打开11
   // if (!cap177.isOpened())
   // {
   //   std::cerr << "Error: Cannot open RTSP177 stream" << std::endl;

@@ -13,7 +13,7 @@ class ImageProcess {
   std::unique_ptr<cv::Mat> Convert(const cv::Mat &src);
   const letterbox_t &get_letter_box();
   void ImagePostProcess(cv::Mat &image, object_detect_result_list &od_results);
-  void ImagePostProcess(cv::Mat &image,const std::vector<STrack> &track_results); 
+  void ImagePostProcess(cv::Mat &image,const std::vector<STrack> &track_results,const MyTrack &mytrack); 
 
 private:
   double scale_;

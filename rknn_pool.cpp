@@ -97,12 +97,16 @@ void RknnPool::AddInferenceTask(std::shared_ptr<cv::Mat> src,
         //bytetrack检测
         this->mytrack.Add_frame(od_results);
         std::cout<<"strack number "<<this->mytrack.m_stracks.size()<<" of "<<od_results.count<<endl;
+        std::lock_guard<std::mutex> lock_guard(this->image_results_mutex_);
         image_process.ImagePostProcess(*original_img, this->mytrack.m_stracks,this->mytrack);
+        image_process.ImagePostProcess(*original_img, od_results);
 
 
         // image_process.ImagePostProcess(*original_img, od_results);
-        std::lock_guard<std::mutex> lock_guard(this->image_results_mutex_);
+       // original_img = std::make_shared<cv::Mat>(rgb_img.clone());
         this->image_results_.push(std::move(original_img));
+        //this->image_results_.push(shared_img);
+       // this->image_results_.push(std::move(original_img));
         std::lock_guard<std::mutex> lock_guard1(this->obj_results_mutex_);
         std::shared_ptr<object_detect_result_list> od = std::make_shared<object_detect_result_list>(od_results);
         this->obj_results.push(std::move(od));
