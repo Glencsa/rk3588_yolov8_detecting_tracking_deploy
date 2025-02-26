@@ -1,2 +1,4 @@
 # rk3588_yolov8_detecting_tracking_deploy
 在国产板卡rk3588上实现yolo_v8的目标检测,并嵌入了bytetrack的目标跟踪，解决了在实时目标检测上的视频推流相关的问题，ffmpeg视频编解码花屏，速率等相关问题，在实际演示中对小目标船只检测和跟踪有着比较好的应用效果。
+平台：Ubuntu 18.04 arm64
+板卡型号：瑞星微 rk3588
